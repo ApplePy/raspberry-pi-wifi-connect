@@ -1,7 +1,7 @@
 #! /bin/bash
 
-if [ "$(whoami)" != 'root' ]; then
-   echo "This script must be run as root" 1>&2
+if [ "$(whoami)" = 'root' ]; then
+   echo "This script should not be run as root" 1>&2
    exit 1
 fi
 
@@ -26,14 +26,15 @@ fi
 set -e #Causes the script to exit on the first failure
 
 PASS=""
+
 echo -n "Enter password: "
 read -s PASS
 echo ""
 
 openssl aes-256-cbc -a -d -pass pass:$PASS -in ./$NAME.conf -out ./$NAME_decrypted.conf
 
-cat ./$NAME_decrypted.conf > /etc/wpa_supplicant/wpa_supplicant.conf
-rm ./$NAME_decrypted.conf
+editor ./$NAME_decrypted.conf
 
-ifdown wlan0
-ifup wlan0
+openssl aes-256-cbc -a -e -pass pass:$PASS -out ./$NAME.conf -in ./$NAME_decrypted.conf
+
+rm ./$NAME_decrypted.conf

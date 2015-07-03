@@ -5,7 +5,7 @@ if [ "$(whoami)" != 'root' ]; then
    exit 1
 fi
 
-cat normal.conf > /etc/wpa_supplicant/wpa_supplicant.conf
+cat template.config > /etc/wpa_supplicant/wpa_supplicant.conf
 
 ifdown wlan0
 ifup wlan0
